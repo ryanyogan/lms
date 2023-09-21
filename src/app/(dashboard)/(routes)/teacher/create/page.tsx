@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,21 +11,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { CourseCreationRequest, formSchema } from "@/lib/validators/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Course } from "@prisma/client";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-});
-
 export default function CreatePage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,11 +34,24 @@ export default function CreatePage() {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: CourseCreationRequest) => {
     try {
-      const res = await axios.post("/api/course", values);
+      const res: { data: Course } = await axios.post("/api/courses", values);
+
+      toast({
+        title: "Course Created",
+        description: `${res.data.title} created`,
+        variant: "default",
+      });
+
+      router.refresh();
       router.push(`/teacher/courses/${res?.data.id}`);
     } catch (error) {
+      toast({
+        title: "An Error Occurred",
+        description: "Please try again",
+        variant: "destructive",
+      });
       console.log(error);
     }
   };
