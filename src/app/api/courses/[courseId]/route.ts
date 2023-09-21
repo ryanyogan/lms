@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { formSchema } from "@/lib/validators/forms";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -22,12 +21,7 @@ export async function PATCH(req: Request, { params }: Params) {
       return new NextResponse("CourseID is required 🚫", { status: 400 });
     }
 
-    const body = await req.json();
-    const { title } = formSchema.parse(body);
-
-    if (!title) {
-      return new NextResponse("You need a title... 🚫", { status: 400 });
-    }
+    const values = await req.json();
 
     const course = await db.course.update({
       where: {
@@ -35,7 +29,7 @@ export async function PATCH(req: Request, { params }: Params) {
         userId,
       },
       data: {
-        title,
+        ...values,
       },
     });
 
