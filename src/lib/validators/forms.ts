@@ -12,5 +12,12 @@ export const descriptionFormSchema = z.object({
   }),
 });
 
+export const imageFormSchema = z.object({
+  imageUrl: z.string().min(1, {
+    message: "Image is required",
+  }),
+});
+
 export type CourseCreationRequest = z.infer<typeof formSchema>;
 export type DescriptionRequest = z.infer<typeof descriptionFormSchema>;
+export type ImageRequest = z.infer<typeof imageFormSchema>;
