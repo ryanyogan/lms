@@ -18,6 +18,11 @@ export const imageFormSchema = z.object({
   }),
 });
 
+export const categoryFormSchema = z.object({
+  categoryId: z.string().min(1),
+});
+
 export type CourseCreationRequest = z.infer<typeof formSchema>;
 export type DescriptionRequest = z.infer<typeof descriptionFormSchema>;
 export type ImageRequest = z.infer<typeof imageFormSchema>;
+export type CategoryRequest = z.infer<typeof categoryFormSchema>;
